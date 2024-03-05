@@ -24,4 +24,4 @@ EXPOSE 3000
 
 
 # command to run the app
-CMD [ "npm", "start" ]
+CMD [ "npm", "run" ,"dev"]
