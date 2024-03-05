@@ -2,11 +2,15 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const validateEmail = function (email) {
+   const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+   return regex.test(email);
+};
 const userSchema = new Schema(
    {
       username: {
          type: String,
-         required: true,
+         required: [true, "Username is required"],
          unique: true,
          lowercase: true,
          trim: true,
@@ -14,14 +18,15 @@ const userSchema = new Schema(
       },
       email: {
          type: String,
-         required: true,
+         required: [true, "Email is required"],
          unique: true,
          lowercase: true,
          trim: true,
+         validate: [validateEmail, "Please fill a valid email address"],
       },
       fullName: {
          type: String,
-         required: true,
+         required: [true, "FullName is required"],
          trim: true,
          index: true,
       },
