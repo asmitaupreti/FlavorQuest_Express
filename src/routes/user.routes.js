@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { registerUser, login, logout } from "../controllers/user.controller.js";
+import {
+   registerUser,
+   login,
+   logout,
+   refreshAccessToken,
+} from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import {
    userLoginValidationSchema,
@@ -26,6 +31,9 @@ router.route("/register").post(
 );
 
 router.route("/login").post(validation(userLoginValidationSchema), login);
+router.route("/refreshToken").post(refreshAccessToken);
 
+//secured routes
 router.route("/logout").post(verifyJwt, logout);
+
 export default router;
