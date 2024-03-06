@@ -4,6 +4,22 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+const generateAccessAndRefreshToken = async (userId) => {
+   try {
+      const user = await User.findById(userId);
+      const accessToken = user.generateAccessToken();
+      const refreshToken = user.generateRefreshToken();
+
+      user.refreshToken = refreshToken;
+
+      user.save({ validateBeforeSave: false });
+
+      return { accessToken, refreshToken };
+   } catch (error) {
+      next(new ApiError(500, error?.message));
+   }
+};
+
 const registerUser = asyncHandler(async (req, res) => {
    //get username, fullname, email, password  from request
    const { username, fullName, email, password } = req.body;
@@ -58,7 +74,47 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-   res.status(200).json(new ApiResponse(200, "ok"));
+   // get data
+   const { username, password } = req.body;
+   //validate is empty but in our case it is done by yup middleware
+   //find user
+   const user = User.findOne({
+      $or: [{ username }],
+   });
+   if (!user) {
+      next(new ApiError(404, "User doesnot exist"));
+   }
+   //check password
+   const isPasswordValid = await user.isPasswordCorrect(password);
+
+   if (!isPasswordValid) {
+      next(new ApiError(400, "Wrong password"));
+   }
+   //create access token and refresh token
+   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      user._id
+   );
+   const loggedInUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+   );
+   // send cookie
+   const options = {
+      httpOnly: true,
+      secure: true,
+   };
+
+   // send response
+   return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+         new ApiResponse(200, "User logged In Successfully", {
+            user: loggedInUser,
+            accessToken,
+            refreshToken,
+         })
+      );
 });
 
 export { registerUser, login };

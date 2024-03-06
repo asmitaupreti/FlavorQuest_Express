@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { registerUser, login } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
-import { userCreateValidationSchema } from "../validations/user.validation.js";
+import {
+   userLoginValidationSchema,
+   userRegisterValidationSchema,
+} from "../validations/user.validation.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
@@ -17,9 +20,9 @@ router.route("/register").post(
          maxCount: 1,
       },
    ]),
-   validation(userCreateValidationSchema),
+   validation(userRegisterValidationSchema),
    registerUser
 );
 
-router.route("/login").post(login);
+router.route("/login").post(validation(userLoginValidationSchema), login);
 export default router;
