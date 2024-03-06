@@ -9,6 +9,7 @@ const validation = (schema) => async (req, res, next) => {
       res.status(400).json(
          new ApiError(error.statusCode, error.message, error?.errors)
       );
+      // next(new ApiError(error.statusCode, error.message, error?.errors));
    }
 };
 
