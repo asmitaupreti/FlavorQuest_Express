@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { registerUser, login } from "../controllers/user.controller.js";
+import { registerUser, login, logout } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import {
    userLoginValidationSchema,
    userRegisterValidationSchema,
 } from "../validations/user.validation.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -25,4 +26,6 @@ router.route("/register").post(
 );
 
 router.route("/login").post(validation(userLoginValidationSchema), login);
+
+router.route("/logout").post(verifyJwt, logout);
 export default router;
