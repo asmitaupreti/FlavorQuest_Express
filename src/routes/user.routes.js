@@ -6,6 +6,8 @@ import {
    refreshAccessToken,
    changeCurrentPassword,
    currentUser,
+   updateAvatar,
+   updateCoverImage,
 } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import {
@@ -46,5 +48,9 @@ router
    );
 router.route("/currentUser").get(verifyJwt, currentUser);
 router.route("/logout").post(verifyJwt, logout);
+router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateAvatar);
+router
+   .route("/cover-image")
+   .patch(verifyJWT, upload.single("coverImage"), updateCoverImage);
 
 export default router;

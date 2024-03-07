@@ -6,6 +6,18 @@ const validateEmail = function (email) {
    const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
    return regex.test(email);
 };
+
+const imageScheme = new Schema({
+   imageUrl: {
+      type: String, // cloudinary url
+      required: true,
+   },
+   imagePublicId: {
+      type: String, // cloudinary public id
+      required: true,
+   },
+});
+
 const userSchema = new Schema(
    {
       username: {
@@ -32,12 +44,12 @@ const userSchema = new Schema(
       },
 
       avatar: {
-         type: String, // cloudinary url
+         type: imageScheme, // cloudinary url
          required: true,
       },
 
       coverImage: {
-         type: String, // cloudinary url
+         type: imageScheme, // cloudinary url
       },
 
       password: {
