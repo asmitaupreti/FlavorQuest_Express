@@ -8,6 +8,7 @@ import {
    currentUser,
    updateAvatar,
    updateCoverImage,
+   updateAccountDetail,
 } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import {
@@ -36,17 +37,18 @@ router.route("/register").post(
 );
 
 router.route("/login").post(validation(userLoginValidationSchema), login);
-router.route("/refreshToken").post(refreshAccessToken);
+router.route("/refresh-token").post(refreshAccessToken);
 
 //secured routes
 router
-   .route("/changePassword")
+   .route("/change-password")
    .post(
       validation(changeUserPasswordValidation),
       verifyJwt,
       changeCurrentPassword
    );
-router.route("/currentUser").get(verifyJwt, currentUser);
+router.route("/current-user").get(verifyJwt, currentUser);
+router.route("/update-account").patch(verifyJWT, updateAccountDetail);
 router.route("/logout").post(verifyJwt, logout);
 router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateAvatar);
 router

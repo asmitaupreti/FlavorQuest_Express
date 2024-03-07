@@ -228,7 +228,30 @@ const currentUser = asyncHandler(async (req, res) => {
    );
 });
 
-const updateAccountDetail = asyncHandler(async (req, res) => {});
+const updateAccountDetail = asyncHandler(async (req, res) => {
+   // get data from req
+   const { fullName, email } = req.body;
+   //validate data
+   if (!fullName && !email) {
+      next(new ApiError(400, "All fields are required"));
+   }
+   // save it in database
+   const user = await User.findByIdAndUpdate(
+      req.user?._id,
+      {
+         $set: {
+            fullName,
+            email: email,
+         },
+      },
+      { new: true }
+   ).select("-password");
+
+   //send back response
+   return res
+      .status(200)
+      .json(new ApiResponse(200, "Account details updated successfully", user));
+});
 
 const updateAvatar = asyncHandler(async (req, res) => {
    //get image from req.file
