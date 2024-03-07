@@ -5,6 +5,7 @@ import {
    logout,
    refreshAccessToken,
    changeCurrentPassword,
+   currentUser,
 } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import {
@@ -43,6 +44,7 @@ router
       verifyJwt,
       changeCurrentPassword
    );
+router.route("/currentUser").get(verifyJwt, currentUser);
 router.route("/logout").post(verifyJwt, logout);
 
 export default router;
