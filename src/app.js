@@ -25,8 +25,12 @@ app.use(globalErrorHandler);
 
 //routes
 import userRouter from "./routes/user.routes.js";
+import favoriteRouter from "./routes/favorite.routes.js";
+import recipeRouter from "./routes/recipe.routes.js";
 
 //routes declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/recipes", recipeRouter);
+app.use("/api/v1/favorites", favoriteRouter);
 
 export { app };
