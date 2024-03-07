@@ -4,9 +4,11 @@ import {
    login,
    logout,
    refreshAccessToken,
+   changeCurrentPassword,
 } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import {
+   changeUserPasswordValidation,
    userLoginValidationSchema,
    userRegisterValidationSchema,
 } from "../validations/user.validation.js";
@@ -34,6 +36,13 @@ router.route("/login").post(validation(userLoginValidationSchema), login);
 router.route("/refreshToken").post(refreshAccessToken);
 
 //secured routes
+router
+   .route("/changePassword")
+   .post(
+      validation(changeUserPasswordValidation),
+      verifyJwt,
+      changeCurrentPassword
+   );
 router.route("/logout").post(verifyJwt, logout);
 
 export default router;

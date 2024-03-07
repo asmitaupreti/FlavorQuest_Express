@@ -23,7 +23,36 @@ const userRegisterValidationSchema = object({
 });
 const userLoginValidationSchema = object({
    username: string().required().trim(),
-   password: string().required(),
+   password: string()
+      .required()
+      .matches(
+         PASSWORD_REGEX,
+         "password must contain only letters and numbers with a minimum of 8 characters"
+      ),
 });
 
-export { userRegisterValidationSchema, userLoginValidationSchema };
+const changeUserPasswordValidation = object({
+   oldPassword: string()
+      .required()
+      .matches(
+         PASSWORD_REGEX,
+         "password must contain only letters and numbers with a minimum of 8 characters"
+      ),
+   newPassword: string()
+      .required()
+      .matches(
+         PASSWORD_REGEX,
+         "password must contain only letters and numbers with a minimum of 8 characters"
+      ),
+   confirmPassword: string()
+      .required()
+      .oneOf(
+         [ref("newPassword"), null],
+         "confirm password must match with new password"
+      ),
+});
+export {
+   userRegisterValidationSchema,
+   userLoginValidationSchema,
+   changeUserPasswordValidation,
+};
