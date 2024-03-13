@@ -24,7 +24,7 @@ const generateAccessAndRefreshToken = async (userId) => {
    }
 };
 
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res, next) => {
    //get username, fullname, email, password  from request
    const { username, fullName, email, password } = req.body;
    // validation not empty {if yup is wprking this is handled by yup}
@@ -83,7 +83,7 @@ const registerUser = asyncHandler(async (req, res) => {
    );
 });
 
-const login = asyncHandler(async (req, res) => {
+const login = asyncHandler(async (req, res, next) => {
    // get data
    const { username, password } = req.body;
    //validate is empty but in our case it is done by yup middleware
@@ -152,7 +152,7 @@ const logout = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, "User logged Out", {}));
 });
 
-const refreshAccessToken = asyncHandler(async (req, res) => {
+const refreshAccessToken = asyncHandler(async (req, res, next) => {
    const incomingRefreshToken =
       req.cookies?.refreshToken || req.body.refreshToken;
 
@@ -196,7 +196,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       );
 });
 
-const changeCurrentPassword = asyncHandler(async (req, res) => {
+const changeCurrentPassword = asyncHandler(async (req, res, next) => {
    // get old password new password confirm password
    const { oldPassword, newPassword, confirmPassword } = req.body;
    // get user with user id
@@ -216,7 +216,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
    );
 });
 
-const currentUser = asyncHandler(async (req, res) => {
+const currentUser = asyncHandler(async (req, res, next) => {
    //get current user from req.user
    const user = req.user;
    if (!user) {
@@ -228,7 +228,7 @@ const currentUser = asyncHandler(async (req, res) => {
    );
 });
 
-const updateAccountDetail = asyncHandler(async (req, res) => {
+const updateAccountDetail = asyncHandler(async (req, res, next) => {
    // get data from req
    const { fullName, email } = req.body;
    //validate data
@@ -253,7 +253,7 @@ const updateAccountDetail = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, "Account details updated successfully", user));
 });
 
-const updateAvatar = asyncHandler(async (req, res) => {
+const updateAvatar = asyncHandler(async (req, res, next) => {
    //get image from req.file
    const avatarLocalImagePath = req.file?.path;
 
@@ -304,7 +304,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
    );
 });
 
-const updateCoverImage = asyncHandler(async (req, res) => {
+const updateCoverImage = asyncHandler(async (req, res, next) => {
    //get image from req.file
    const coverImageLocalImagePath = req.file?.path;
 

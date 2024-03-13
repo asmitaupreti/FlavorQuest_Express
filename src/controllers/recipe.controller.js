@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 const base_url = process.env.SPOONACULAR_BASE_URL;
 const recipe_api_key = process.env.SPOONACULAR_API_KEY;
 
-const recipes = asyncHandler(async (req, res) => {
+const getRecipes = asyncHandler(async (req, res, next) => {
    const { query, limit = 10, page = 0 } = req.query;
    const response = await axios.get(
       `${base_url}/complexSearch?apiKey=${recipe_api_key}&offset=${page * limit}$query=${query}&number=${limit}`
@@ -18,7 +18,7 @@ const recipes = asyncHandler(async (req, res) => {
    res.status(200).json(new ApiResponse(200, "Success", response));
 });
 
-const recipeByIngredient = asyncHandler(async (req, res) => {
+const getRecipeByIngredient = asyncHandler(async (req, res, next) => {
    const { ingredients, limit = 10 } = req.query;
    const response = await axios.get(
       `${base_url}/findByIngredients?apiKey=${recipe_api_key}&ingredients=${ingredients}&number=${limit}ignorePantry=false`
@@ -39,11 +39,20 @@ const recipeByIngredient = asyncHandler(async (req, res) => {
    );
 });
 
-const recipeDetail = asyncHandler(async (req, res) => {
-   const id = req.params?.id;
+const recipeExist = async (id, includeNutrition = true) => {
    const response = await axios.get(
-      `${base_url}/informationBulk?apiKey=${recipe_api_key}&ids=${id}&includeNutrition=true`
+      `${base_url}/informationBulk?apiKey=${recipe_api_key}&ids=${id}&includeNutrition=${includeNutrition}`
    );
+
+   return response;
+};
+
+const getRecipeDetail = asyncHandler(async (req, res, next) => {
+   const id = req.params?.id;
+   const response = await recipeExist(id);
+   // const response = await axios.get(
+   //    `${base_url}/informationBulk?apiKey=${recipe_api_key}&ids=${id}&includeNutrition=true`
+   // );
    if (!response) {
       next(
          new ApiError(500, "Something went wrong when retrieving recipe detail")
@@ -57,4 +66,4 @@ const recipeDetail = asyncHandler(async (req, res) => {
    );
 });
 
-export { recipes, recipeByIngredient, recipeDetail };
+export { recipeExist, getRecipes, getRecipeByIngredient, getRecipeDetail };

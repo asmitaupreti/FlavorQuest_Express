@@ -1,14 +1,14 @@
 import { Router } from "express";
 import {
-   recipeByIngredient,
-   recipeDetail,
-   recipes,
+   getRecipeByIngredient,
+   getRecipeDetail,
+   getRecipes,
 } from "../controllers/recipe.controller";
 
 const router = Router();
 
-router.route("/").get(recipes);
-router.route("/recipe-by-ingredient").get(recipeByIngredient);
-router.route("/recipe-detail/:id").get(recipeDetail);
+router.route("/").get(getRecipes);
+router.route("/recipe-by-ingredient").get(getRecipeByIngredient);
+router.route("/recipe-detail/:id").get(getRecipeDetail);
 
 export default router;
