@@ -12,7 +12,9 @@ const getRecipes = asyncHandler(async (req, res, next) => {
       `${base_url}/complexSearch?apiKey=${recipe_api_key}&offset=${page * limit}$query=${query}&number=${limit}`
    );
    if (!response) {
-      next(new ApiError(500, "Something went wrong when retrieving recipes"));
+      return next(
+         new ApiError(500, "Something went wrong when retrieving recipes")
+      );
    }
 
    res.status(200).json(new ApiResponse(200, "Success", response));
@@ -24,7 +26,7 @@ const getRecipeByIngredient = asyncHandler(async (req, res, next) => {
       `${base_url}/findByIngredients?apiKey=${recipe_api_key}&ingredients=${ingredients}&number=${limit}ignorePantry=false`
    );
    if (!response) {
-      next(
+      return next(
          new ApiError(
             500,
             "Something went wrong when retrieving recipes based on ingredients"
@@ -54,7 +56,7 @@ const getRecipeDetail = asyncHandler(async (req, res, next) => {
    //    `${base_url}/informationBulk?apiKey=${recipe_api_key}&ids=${id}&includeNutrition=true`
    // );
    if (!response) {
-      next(
+      return next(
          new ApiError(500, "Something went wrong when retrieving recipe detail")
       );
    }

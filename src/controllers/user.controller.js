@@ -20,7 +20,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 
       return { accessToken, refreshToken };
    } catch (error) {
-      next(new ApiError(500, error?.message));
+      return next(new ApiError(500, error?.message));
    }
 };
 
@@ -34,14 +34,14 @@ const registerUser = asyncHandler(async (req, res, next) => {
    });
 
    if (existedUser) {
-      next(new ApiError(409, "username or email already exist"));
+      return next(new ApiError(409, "username or email already exist"));
    }
    //check for images, check for aavatar
    const avatarLocalPath = req.files?.avatar[0]?.path;
    const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
    if (!avatarLocalPath) {
-      next(new ApiError(400, "avatar file is required"));
+      return next(new ApiError(400, "avatar file is required"));
    }
 
    //upload them to cloudinary, avatar upload url avaiable or not
@@ -49,7 +49,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
    if (!avatarUrl) {
-      next(new ApiError(400, "avatar file is required"));
+      return next(new ApiError(400, "avatar file is required"));
    }
 
    //create user object- Create entry in db
@@ -75,7 +75,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
    );
 
    if (!createdUser) {
-      next(new ApiError(500, "Something went wrong when registering the user"));
+      return next(
+         new ApiError(500, "Something went wrong when registering the user")
+      );
    }
 
    res.status(201).json(
@@ -92,13 +94,13 @@ const login = asyncHandler(async (req, res, next) => {
       $or: [{ username }],
    });
    if (!user) {
-      next(new ApiError(404, "User doesnot exist"));
+      return next(new ApiError(404, "User doesnot exist"));
    }
    //check password
    const isPasswordValid = await user.isPasswordCorrect(password);
 
    if (!isPasswordValid) {
-      next(new ApiError(400, "Wrong password"));
+      return next(new ApiError(400, "Wrong password"));
    }
    //create access token and refresh token
    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -157,23 +159,23 @@ const refreshAccessToken = asyncHandler(async (req, res, next) => {
       req.cookies?.refreshToken || req.body.refreshToken;
 
    if (!refreshToken) {
-      next(new ApiError(401, "Unauthorized request"));
+      return next(new ApiError(401, "Unauthorized request"));
    }
    const decodedRefreshToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
    );
    if (!decodedRefreshToken) {
-      next(new ApiError(401, "Unauthorized request"));
+      return next(new ApiError(401, "Unauthorized request"));
    }
 
    const user = await User.findById(decodedRefreshToken._id);
    if (!user) {
-      next(new ApiError(401, "Invalid refresh token"));
+      return next(new ApiError(401, "Invalid refresh token"));
    }
 
    if (incomingRefreshToken !== user?.refreshToken) {
-      next(new ApiError(401, "Refresh token is invalid or used"));
+      return next(new ApiError(401, "Refresh token is invalid or used"));
    }
    const { accessToken, refreshAccessToken } =
       await generateAccessAndRefreshToken(user._id);
@@ -204,7 +206,7 @@ const changeCurrentPassword = asyncHandler(async (req, res, next) => {
    // check if the existing user has the password as old password
    const isPasswordValid = user.isPasswordCorrect(oldPassword);
    if (!isPasswordValid) {
-      next(new ApiError(400, "Invalid old password"));
+      return next(new ApiError(400, "Invalid old password"));
    }
    // set password to new password
    user.password = newPassword;
@@ -220,7 +222,7 @@ const currentUser = asyncHandler(async (req, res, next) => {
    //get current user from req.user
    const user = req.user;
    if (!user) {
-      next(new ApiError(400, "Invalid access token"));
+      return next(new ApiError(400, "Invalid access token"));
    }
    //send response
    res.status(200).json(
@@ -233,7 +235,7 @@ const updateAccountDetail = asyncHandler(async (req, res, next) => {
    const { fullName, email } = req.body;
    //validate data
    if (!fullName && !email) {
-      next(new ApiError(400, "All fields are required"));
+      return next(new ApiError(400, "All fields are required"));
    }
    // save it in database
    const user = await User.findByIdAndUpdate(
@@ -259,12 +261,12 @@ const updateAvatar = asyncHandler(async (req, res, next) => {
 
    // validate the image
    if (!avatarLocalImagePath) {
-      next(new ApiError(400, "Avatar file is missing"));
+      return next(new ApiError(400, "Avatar file is missing"));
    }
    // upload the image to cloudinary
    const uploadResponse = await uploadOnCloudinary(avatarLocalImagePath);
    if (!uploadResponse.url) {
-      next(new ApiError(400, "Error while uploading on avatar"));
+      return next(new ApiError(400, "Error while uploading on avatar"));
    }
    // update the avatar data with new cloudinary image data
    const user = await User.findByIdAndUpdate(
@@ -280,7 +282,7 @@ const updateAvatar = asyncHandler(async (req, res, next) => {
       { new: true }
    ).select("-password");
    if (!user) {
-      next(
+      return next(
          new ApiError(
             500,
             "Something went wrong when updating the avatar image"
@@ -290,7 +292,7 @@ const updateAvatar = asyncHandler(async (req, res, next) => {
    // delete the old image from cloudinary
    const deleteResponse = await deleteFromCloudinary(user.avatar.imagePublicId);
    if (!deleteResponse) {
-      next(
+      return next(
          new ApiError(
             500,
             "Something went wrong when updating the avatar image"
@@ -310,12 +312,12 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
 
    // validate the image
    if (!coverImageLocalImagePath) {
-      next(new ApiError(400, "Cover Image file is missing"));
+      return next(new ApiError(400, "Cover Image file is missing"));
    }
    // upload the image to cloudinary
    const uploadResponse = await uploadOnCloudinary(coverImageLocalImagePath);
    if (!uploadResponse.url) {
-      next(new ApiError(400, "Error while uploading on cover image"));
+      return next(new ApiError(400, "Error while uploading on cover image"));
    }
    // update the avatar data with new cloudinary image data
    const user = await User.findByIdAndUpdate(
@@ -331,7 +333,7 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
       { new: true }
    ).select("-password");
    if (!user) {
-      next(
+      return next(
          new ApiError(500, "Something went wrong when updating the cover image")
       );
    }
@@ -340,7 +342,7 @@ const updateCoverImage = asyncHandler(async (req, res, next) => {
       user.coverImage.imagePublicId
    );
    if (!deleteResponse) {
-      next(
+      return next(
          new ApiError(500, "Something went wrong when updating the cover image")
       );
    }

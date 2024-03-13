@@ -12,14 +12,14 @@ const addRecipeAsFavorite = asyncHandler(async (req, res, next) => {
 
    //check if recipe id is null or empty
    if (!recipeId) {
-      next(new ApiError(400, " recipe id cannot be empty"));
+      return next(new ApiError(400, " recipe id cannot be empty"));
    }
 
    //Check if recipe exists
    const recipeIdValid = await recipeExist(recipeId);
 
    if (!recipeIdValid) {
-      next(new ApiError(400, " recipe doesnot exist"));
+      return next(new ApiError(400, " recipe doesnot exist"));
    }
    //Check if a Recipe is Already Favorited
 
@@ -28,7 +28,9 @@ const addRecipeAsFavorite = asyncHandler(async (req, res, next) => {
       user: user._id,
    });
    if (existingFavorite) {
-      next(new ApiError(400, "This recipe has already been saved to favorite"));
+      return next(
+         new ApiError(400, "This recipe has already been saved to favorite")
+      );
    }
    //save it to favorite
    const createdFavorite = await Favorite.create({
@@ -37,7 +39,7 @@ const addRecipeAsFavorite = asyncHandler(async (req, res, next) => {
    });
 
    if (!createdFavorite) {
-      next(
+      return next(
          new ApiError(
             500,
             "Something went wrong when adding recipe as favorite"
@@ -59,14 +61,14 @@ const removeRecipeFromFavorite = asyncHandler(async (req, res, next) => {
 
    //check if recipe id is null or empty
    if (!recipeId) {
-      next(new ApiError(400, " recipe id cannot be empty"));
+      return next(new ApiError(400, " recipe id cannot be empty"));
    }
 
    //Check if recipe exists
    const recipeIdValid = await recipeExist(recipeId);
 
    if (!recipeIdValid) {
-      next(new ApiError(400, " recipe doesnot exist"));
+      return next(new ApiError(400, " recipe doesnot exist"));
    }
 
    //find the favorite record
@@ -76,7 +78,9 @@ const removeRecipeFromFavorite = asyncHandler(async (req, res, next) => {
    });
 
    if (!favorite) {
-      next(new ApiError(400, "This recipe has not been saved to favorite"));
+      return next(
+         new ApiError(400, "This recipe has not been saved to favorite")
+      );
    }
 
    //delete the recipe from favorite
@@ -85,7 +89,7 @@ const removeRecipeFromFavorite = asyncHandler(async (req, res, next) => {
       user: user._id,
    });
    if (!response) {
-      next(
+      return next(
          new ApiError(
             500,
             "Something went wrong when removing recipe from favorite"
