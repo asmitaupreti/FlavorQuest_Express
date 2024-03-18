@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { verifyJwt } from "../middlewares/auth.middleware";
+import { verifyJwt } from "../middlewares/auth.middleware.js";
 import {
    addCommentToARecipe,
    editComment,
    getAllCommentOfARecipe,
    removeCommentFromRecipe,
-} from "../controllers/comment.controller";
+} from "../controllers/comment.controller.js";
 
 const router = Router();
 router.route("/:id").get(getAllCommentOfARecipe);

@@ -21,8 +21,6 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(sanitize());
 
-app.use(globalErrorHandler);
-
 //routes
 import userRouter from "./routes/user.routes.js";
 import favoriteRouter from "./routes/favorite.routes.js";
@@ -35,4 +33,5 @@ app.use("/api/v1/recipes", recipeRouter);
 app.use("/api/v1/favorites", favoriteRouter);
 app.use("/api/v1/comments", commentRouter);
 
+app.use(globalErrorHandler);
 export { app };

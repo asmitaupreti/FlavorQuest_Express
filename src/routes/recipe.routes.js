@@ -3,7 +3,7 @@ import {
    getRecipeByIngredient,
    getRecipeDetail,
    getRecipes,
-} from "../controllers/recipe.controller";
+} from "../controllers/recipe.controller.js";
 
 const router = Router();
 

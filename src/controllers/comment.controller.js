@@ -1,7 +1,8 @@
-import { Comment } from "../models/comment.model";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
-import { recipeExist } from "./recipe.controller";
+import { Comment } from "../models/comment.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { recipeExist } from "./recipe.controller.js";
 
 const addCommentToARecipe = asyncHandler(async (req, res, next) => {
    //get the id of the recipe  and comment string that the user wants to post

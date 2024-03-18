@@ -3,8 +3,8 @@ import {
    addRecipeAsFavorite,
    getAllFavoriteRecipe,
    removeRecipeFromFavorite,
-} from "../controllers/favorite.controller";
-import { verifyJwt } from "../middlewares/auth.middleware";
+} from "../controllers/favorite.controller.js";
+import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

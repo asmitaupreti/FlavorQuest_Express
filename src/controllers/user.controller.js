@@ -11,8 +11,8 @@ import jwt from "jsonwebtoken";
 const generateAccessAndRefreshToken = async (userId) => {
    try {
       const user = await User.findById(userId);
-      const accessToken = user.generateAccessToken();
-      const refreshToken = user.generateRefreshToken();
+      const accessToken = await user.generateAccessToken();
+      const refreshToken = await user.generateRefreshToken();
 
       user.refreshToken = refreshToken;
 
@@ -26,10 +26,11 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 const registerUser = asyncHandler(async (req, res, next) => {
    //get username, fullname, email, password  from request
+
    const { username, fullName, email, password } = req.body;
    // validation not empty {if yup is wprking this is handled by yup}
    //check if user already exist: username, email
-   const existedUser = User.findOne({
+   const existedUser = await User.findOne({
       $or: [{ email }, { username }],
    });
 
@@ -38,7 +39,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
    }
    //check for images, check for aavatar
    const avatarLocalPath = req.files?.avatar[0]?.path;
-   const coverImageLocalPath = req.files?.coverImage[0]?.path;
+   const coverImageLocalPath = req.files?.coverImage?.[0]?.path ?? null;
 
    if (!avatarLocalPath) {
       return next(new ApiError(400, "avatar file is required"));
@@ -46,9 +47,13 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
    //upload them to cloudinary, avatar upload url avaiable or not
    const avatar = await uploadOnCloudinary(avatarLocalPath);
-   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+   console.log(avatar, "#################");
+   let cover_image = null;
+   if (!coverImageLocalPath) {
+      cover_image = await uploadOnCloudinary(coverImageLocalPath);
+   }
 
-   if (!avatarUrl) {
+   if (!avatar) {
       return next(new ApiError(400, "avatar file is required"));
    }
 
@@ -61,10 +66,12 @@ const registerUser = asyncHandler(async (req, res, next) => {
          imageUrl: avatar.url,
          imagePublicId: avatar.public_id,
       },
-      coverImage: {
-         imageUrl: coverImage.url || "",
-         imagePublicId: coverImage.public_id || "",
-      },
+      coverImage: cover_image
+         ? {
+              imageUrl: cover_image?.url || "",
+              imagePublicId: cover_image?.public_id || "",
+           }
+         : null,
       password,
    });
 
@@ -90,7 +97,7 @@ const login = asyncHandler(async (req, res, next) => {
    const { username, password } = req.body;
    //validate is empty but in our case it is done by yup middleware
    //find user
-   const user = User.findOne({
+   const user = await User.findOne({
       $or: [{ username }],
    });
    if (!user) {

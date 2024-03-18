@@ -48,11 +48,11 @@ router
       changeCurrentPassword
    );
 router.route("/current-user").get(verifyJwt, currentUser);
-router.route("/update-account").patch(verifyJWT, updateAccountDetail);
+router.route("/update-account").patch(verifyJwt, updateAccountDetail);
 router.route("/logout").post(verifyJwt, logout);
-router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateAvatar);
+router.route("/avatar").patch(verifyJwt, upload.single("avatar"), updateAvatar);
 router
    .route("/cover-image")
-   .patch(verifyJWT, upload.single("coverImage"), updateCoverImage);
+   .patch(verifyJwt, upload.single("coverImage"), updateCoverImage);
 
 export default router;

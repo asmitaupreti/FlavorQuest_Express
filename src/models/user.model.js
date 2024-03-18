@@ -10,11 +10,9 @@ const validateEmail = function (email) {
 const imageScheme = new Schema({
    imageUrl: {
       type: String, // cloudinary url
-      required: true,
    },
    imagePublicId: {
       type: String, // cloudinary public id
-      required: true,
    },
 });
 

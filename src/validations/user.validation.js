@@ -6,7 +6,6 @@ const userRegisterValidationSchema = object({
    username: string().required().trim(),
    email: string().email().required(),
    fullName: string().required().trim().min(2).max(50),
-   avatar: string().required(),
    coverImage: string().optional(),
    password: string()
       .matches(
