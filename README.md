@@ -9,6 +9,11 @@ FlavorQuest is a food discovery application that allows users to explore recipes
 - **Favorites**: Users can save their favorite recipes for easy access.
 - **Comments**: Users can comment on recipes and manage their comments.
 
+## Future Plans
+
+- **WebSocket Notifications**: We plan to implement WebSocket support for real-time notifications. This feature will provide users with instant notifications regarding new comments on their recipes and updates on their favorited recipes.
+
+
 ## Technologies Used
 
 - **Backend**: Node.js with Express
@@ -31,3 +36,23 @@ FlavorQuest is a food discovery application that allows users to explore recipes
 
    ```bash
    git clone https://github.com/yourusername/flavorquest.git
+2. Navigate to the project directory:
+   
+   ```bash
+   git clone https://github.com/yourusername/flavorquest.git
+3. Install dependencies:
+
+   ```bash
+   npm install
+4. Create a .env file in the root directory with the following variables:
+   
+   ```bash
+   MONGO_URI=your_mongodb_uri
+   CLOUDINARY_URL=your_cloudinary_url
+   SPOONACULAR_BASE_URL=https://api.spoonacular.com/recipes
+   SPOONACULAR_API_KEY=your_spoonacular_api_key
+   
+3. Start the application:
+
+   ```bash
+   Start the application
